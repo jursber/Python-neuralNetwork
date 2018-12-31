@@ -4,7 +4,7 @@
 初始化、训练、查询
 """
 import numpy as np
-from scipy.special import expit
+from scipy.special import expit , logit
 import os
 
 class neuralNetwork:
@@ -69,5 +69,41 @@ class neuralNetwork:
         final_outputs=self.activation_function(final_inputs)
         
         return final_outputs
+    
+    #逆向查询，通过输出数组生成可解释的图像数组（并非原图）
+    def back_query(self,target_list):
+        #Sigmoid的反函数
+        self.inverse_activation_function=logit        
+        #输出层
+        final_outputs = np.array(target_list, ndmin=2).T
+        final_inputs = self.inverse_activation_function(final_outputs)
+
+        #隐藏层
+        hidden_outputs = np.dot(self.who.T, final_inputs)
+        hidden_outputs -= np.min(hidden_outputs)
+        hidden_outputs /= np.max(hidden_outputs)
+        hidden_outputs *= 0.98
+        hidden_outputs += 0.01
+        
+        hidden_inputs = self.inverse_activation_function(hidden_outputs)   
+        
+        #输入层
+        inputs = np.dot(self.wih.T, hidden_inputs)
+
+        inputs -= np.min(inputs)
+        inputs /= np.max(inputs)
+        inputs *= 0.98
+        inputs += 0.01
+        return inputs
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     
     

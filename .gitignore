@@ -1,0 +1,5 @@
+/mnist_dataset/mnist_test.csv
+/mnist_dataset/mnist_train.csv
+/mnist_dataset/new_train_plus10.csv
+/mnist_dataset/new_train_minus10.csv
+/__pycache__/*
