@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-《Python神经网络教程》练习
+神经网络基本框架
+初始化、训练、查询
 """
 import numpy as np
 from scipy.special import expit
+import os
 
 class neuralNetwork:
     #初始化神经网络
@@ -16,13 +18,26 @@ class neuralNetwork:
         #学习率
         self.lr=learningrate
         
-        #初始化权重网络,mean=0,std=1/((连接数)^(1/2))
-        self.wih=np.random.normal(0.0,pow(self.hnodes,-.5),(self.hnodes,self.inodes))
-        self.who=np.random.normal(0.0,pow(self.onodes,-.5),(self.onodes,self.hnodes))   
-
-        #Sigmoid函数
+        if self.init_check():
+            #若存在权重文件，则使用
+            self.wih=np.loadtxt(open("weight_data/wih.csv","r"), delimiter=",", skiprows=0)
+            self.who=np.loadtxt(open("weight_data/who.csv","r"), delimiter=",", skiprows=0)
+        else:                       
+            #若不存在权重文件，初始化权重网络,mean=0,std=1/((连接数)^(1/2))
+            self.wih=np.random.normal(0.0,pow(self.hnodes,-.5),(self.hnodes,self.inodes))
+            self.who=np.random.normal(0.0,pow(self.onodes,-.5),(self.onodes,self.hnodes))   
+        
+        #利用现有库创建Sigmoid函数
         self.activation_function=expit
-            
+           
+    #验证是否存在已训练好的权重文件，文件是否有效
+    def init_check(self):
+        if os.path.exists('weight_data/wih.csv') and os.path.exists('weight_data/who.csv'):
+            if (np.loadtxt(open("weight_data/wih.csv","r"), delimiter=",", skiprows=0).shape==(self.hnodes,self.inodes) and 
+                np.loadtxt(open("weight_data/who.csv","r"), delimiter=",", skiprows=0).shape==(self.onodes,self.hnodes)):
+                return True
+        return False
+        
     #训练神经网络
     def train(self,inputs_list,targets_list):            
         inputs=np.array(inputs_list,ndmin=2).T
