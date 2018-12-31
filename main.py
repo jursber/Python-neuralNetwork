@@ -1,32 +1,31 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Dec 30 16:51:19 2018
-
-@author: LT
+神经网络训练、测试
 """
 
 #导入神经网络类
 import neuralNetwork as nt
 import numpy as np
+import time
+import os
 
-def main():
-    #设置每层节点
-    input_nodes=784
-    hidden_nodes=100
-    output_nodes=10
-    #设置学习率
-    learning_rate=.2
-    
-    #创建神经网络对象
-    n=nt.neuralNetwork(input_nodes,hidden_nodes,output_nodes,learning_rate)
-    
+#训练神经网络
+def training_neuralNework():
+    #记录程序开始时间
+    start_time = time.time()
+    #删除原训练数据
+    try:
+        os.remove("weight_data/who.csv")
+        os.remove("weight_data/wih.csv")
+    except:pass
     #读取文件
     training_data_file=open('mnist_dataset/mnist_train.csv','r') 
     training_data_list=training_data_file.readlines()
     training_data_file.close()
     
-    #训练神经网络
-    epochs=1
+    #开始训练
+    train_count=0
+    epochs=6 #训练集应用次数，世代
     for e in range(epochs):
         print('第{}次循环'.format(e+1))
         for record in training_data_list:
@@ -38,10 +37,25 @@ def main():
             targets[int(all_values[0])]=0.99
             #开始训练
             n.train(inputs,targets) 
-       
-    #测试神经网络
+            train_count+=1
+        #print(n.wih[:2,::560])
+        #print(n.who[:2,::10])
+        
+    #训练数据存入文件
+    np.savetxt('weight_data/wih.csv',n.wih,delimiter=',')
+    np.savetxt('weight_data/who.csv',n.who,delimiter=',')
+    #记录程序运行时长   
+    m, s = divmod(int(time.time()-start_time), 60)
+    h, m = divmod(m, 60)
+    
+    print('训练完成，训练数据{}行，循环{}次，用时{:02d}:{:02d}:{:02d}'
+          .format(train_count/epochs,train_count,h,m,s))
+
+#测试神经网络   
+def test_neuralNework():     
     with open('mnist_dataset/mnist_test.csv','r') as test_data_file:
         test_data_list=test_data_file.readlines()
+    
     #对识别效果计分
     scorecard=[]
     for record in test_data_list:
@@ -62,7 +76,16 @@ def main():
     
     
 if __name__=='__main__':
-    main()
+    #设置每层节点
+    input_nodes,hidden_nodes,output_nodes=784,200,10
+    #设置学习率
+    learning_rate=.2
+    #创建神经网络对象
+    n=nt.neuralNetwork(input_nodes,hidden_nodes,output_nodes,learning_rate)
+    
+    #执行程序
+    training_neuralNework()
+    test_neuralNework()
 
 
 
