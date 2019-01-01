@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """
+实用工具，用于测试
 """
 import matplotlib.pyplot as plt
 import numpy as np

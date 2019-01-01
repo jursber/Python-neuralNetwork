@@ -13,8 +13,10 @@ from PIL import Image
 #图片缩放为指定像素
 def imag_scale(input_path,maxw,maxh):
     imag_name=os.listdir(input_path)
-    if not os.path.exists(input_path+'/scaled_imag/'):
-        os.makedirs(input_path+'/scaled_img/') 
+# =============================================================================
+#     if not os.path.exists(input_path+'/scaled_imag'):
+#         os.makedirs(input_path+'/scaled_img') 
+# =============================================================================
     count=0
     for name in imag_name:
         try:
@@ -44,14 +46,15 @@ def imag_to_array(imag_path):
 
 
 if __name__=='__main__':   
-    #    imag_scale('test_img',28,28)
+    #imag_scale('test_img',28,28)
+    
     #初始化神经网络
     input_nodes,hidden_nodes,output_nodes=784,150,10
     learning_rate=.15
     n=nt.neuralNetwork(input_nodes,hidden_nodes,output_nodes,learning_rate)
     #检验导入图像的识别效果
-    imag_1=imag_to_array('test_img/scaled_img/8.png')
-    print(np.argmax(n.query(imag_1)))
+    imag_1=imag_to_array('test_img/scaled_img/4.png')
+    print('当前识别数字：{}'.format(np.argmax(n.query(imag_1))))
     
     #根据输出的数组，反向生成图像
     dis_output=np.full(10,0.01)
