@@ -10,7 +10,7 @@ import time
 import os
 import scipy.ndimage
 import weChatReminder as wcr
-import itchat
+import threading
 
 
 #将原数据图像旋转±10度，生成新的训练集，丰富训练数据
@@ -69,6 +69,7 @@ def training_neuralNework():
     train_count=0
     epochs=8 #训练集应用次数，世代
     #开始训练
+    wcr.real_time_progress='训练马上开始'
     for e in range(epochs):
         print('第{}次循环'.format(e+1))
         data_count=1
@@ -86,6 +87,7 @@ def training_neuralNework():
                 train_count+=1
                 #print(n.wih[:2,::560])
                 #print(n.who[:2,::10])
+                wcr.real_time_progress='已进行{}次'.format(train_count)
             data_count+=1
         wcr.send_wechat_message('第{}次循环（训练）完成！，总计用时{}s'.format(e+1,round(time.time()-start_time,0)))
 
@@ -123,18 +125,25 @@ def test_neuralNework():
     
     
 if __name__=='__main__':
-    wcr.send_wechat_message('Python神经网络程序开始运行！')
-    #设置每层节点
-    input_nodes,hidden_nodes,output_nodes=784,150,10
-    #设置学习率
-    learning_rate=.1
-    #创建神经网络对象
-    n=nt.neuralNetwork(input_nodes,hidden_nodes,output_nodes,learning_rate)
-    #扩充训练集
-    rotate_data()
-    #执行程序
-    training_neuralNework()
-    test_neuralNework()
+    def main():
+        wcr.send_wechat_message('Python神经网络程序开始运行！')
+        #设置每层节点
+        input_nodes,hidden_nodes,output_nodes=784,150,10
+        #设置学习率
+        learning_rate=.1
+        #创建神经网络对象
+        n=nt.neuralNetwork(input_nodes,hidden_nodes,output_nodes,learning_rate)
+        #扩充训练集
+        rotate_data()
+        #执行程序
+        training_neuralNework()
+        test_neuralNework()
+        
+    th=threading.Thread(target=msg)
+    th.setDaemon(True)
+    th.start()
+    
+    wcr.auto_reply('进度')
     
 #    itchat.logout()
 
