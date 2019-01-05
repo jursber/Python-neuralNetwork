@@ -11,7 +11,7 @@ import os
 from multiprocessing import Pool
 import scipy.ndimage
 import weChatReminder as wcr
-import itchat
+import threading
 
 
 #将原数据图像旋转±10度，生成新的训练集，丰富训练数据
