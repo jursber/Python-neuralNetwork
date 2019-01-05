@@ -4,3 +4,5 @@
 /mnist_dataset/new_train_minus10.csv
 /itchat.pkl
 /__pycache__/*
+/.vscode/*
+/test.py
